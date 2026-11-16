@@ -1,0 +1,473 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net: Default-deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Hardened Global Primitives ---
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'tzudogamer@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // --- Entity Validation Blueprints ---
+    function isValidUserProfile(data) {
+      return data.keys().hasAll(['uid', 'displayName', 'role', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['uid', 'displayName', 'photoURL', 'role', 'defaultDeliveryMode', 'createdAt', 'updatedAt'])
+        && isValidId(data.uid)
+        && data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 120
+        && (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 512))
+        && data.role in ['engineer', 'admin']
+        && (!('defaultDeliveryMode' in data) || data.defaultDeliveryMode in ['auto', 'single-file', 'multi-file'])
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'name', 'projectType', 'language', 'environment', 'status', 'filesCount', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'name', 'description', 'projectType', 'language', 'environment', 'status', 'filesCount', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 140
+        && (!('description' in data) || (data.description is string && data.description.size() <= 1000))
+        && data.projectType in ['script', 'luau', 'android', 'web', 'api', 'fullstack', 'single-file']
+        && data.language is string && data.language.size() >= 1 && data.language.size() <= 48
+        && data.environment is string && data.environment.size() >= 1 && data.environment.size() <= 64
+        && data.status in ['PLANNING', 'GENERATING', 'IMPLEMENTING', 'VALIDATING', 'TESTING', 'NEEDS_CORRECTION', 'COMPLETED', 'BLOCKED']
+        && data.filesCount is int && data.filesCount >= 0 && data.filesCount <= 500
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidProjectFile(data) {
+      return data.keys().hasAll(['id', 'projectId', 'ownerId', 'path', 'content', 'language', 'fileKind', 'version', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'projectId', 'ownerId', 'path', 'content', 'language', 'fileKind', 'version', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.projectId)
+        && isValidId(data.ownerId)
+        && data.path is string && data.path.size() >= 1 && data.path.size() <= 260
+        && data.content is string && data.content.size() <= 200000
+        && data.language is string && data.language.size() >= 1 && data.language.size() <= 48
+        && data.fileKind in ['Script', 'LocalScript', 'ModuleScript', 'Source', 'Config', 'Manifest', 'Doc']
+        && data.version is int && data.version >= 1
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidProjectMemory(data) {
+      return data.keys().hasAll(['id', 'projectId', 'ownerId', 'decisionTitle', 'requirements', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'projectId', 'ownerId', 'decisionTitle', 'requirements', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.projectId)
+        && isValidId(data.ownerId)
+        && data.decisionTitle is string && data.decisionTitle.size() >= 1 && data.decisionTitle.size() <= 160
+        && data.requirements is string && data.requirements.size() >= 1 && data.requirements.size() <= 20000
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAiSession(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'module', 'title', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'module', 'title', 'agentId', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && data.module in ['core-ai', 'admin-ai', 'script-studio', 'project-builder', 'luau-lab', 'agent', 'orchestrator']
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 160
+        && (!('agentId' in data) || (data.agentId is string && data.agentId.size() <= 64))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAiMessage(data) {
+      return data.keys().hasAll(['id', 'sessionId', 'ownerId', 'role', 'content', 'createdAt'])
+        && data.keys().hasOnly(['id', 'sessionId', 'ownerId', 'role', 'content', 'modelUsed', 'createdAt'])
+        && isValidId(data.id)
+        && isValidId(data.sessionId)
+        && isValidId(data.ownerId)
+        && data.role in ['user', 'assistant', 'system']
+        && data.content is string && data.content.size() >= 1 && data.content.size() <= 120000
+        && (!('modelUsed' in data) || (data.modelUsed is string && data.modelUsed.size() <= 64))
+        && data.createdAt is timestamp;
+    }
+
+    function isValidAdminKnowledge(data) {
+      return data.keys().hasAll(['id', 'authorId', 'title', 'category', 'content', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'authorId', 'title', 'category', 'content', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.authorId)
+        && data.title is string && data.title.size() >= 1 && data.title.size() <= 160
+        && data.category is string && data.category.size() >= 1 && data.category.size() <= 64
+        && data.content is string && data.content.size() >= 1 && data.content.size() <= 20000
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAutomationJob(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'name', 'actionType', 'status', 'runCount', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'name', 'actionType', 'targetProjectId', 'status', 'lastRunSummary', 'runCount', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 140
+        && data.actionType in ['static-analysis', 'auto-fix', 'format', 'test-suite', 'docs-gen', 'project-audit', 'security-scan', 'backup-sync']
+        && (!('targetProjectId' in data) || (data.targetProjectId is string && data.targetProjectId.size() <= 128))
+        && data.status in ['IDLE', 'RUNNING', 'COMPLETED', 'FAILED']
+        && (!('lastRunSummary' in data) || (data.lastRunSummary is string && data.lastRunSummary.size() <= 4000))
+        && data.runCount is int && data.runCount >= 0
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['id', 'actorId', 'module', 'action', 'severity', 'detail', 'createdAt'])
+        && data.keys().hasOnly(['id', 'actorId', 'module', 'action', 'severity', 'detail', 'createdAt'])
+        && isValidId(data.id)
+        && isValidId(data.actorId)
+        && data.module is string && data.module.size() >= 1 && data.module.size() <= 64
+        && data.action is string && data.action.size() >= 1 && data.action.size() <= 120
+        && data.severity in ['info', 'warning', 'error', 'critical']
+        && data.detail is string && data.detail.size() >= 1 && data.detail.size() <= 2000
+        && data.createdAt is timestamp;
+    }
+
+    function isValidTaskExecution(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'module', 'prompt', 'language', 'environment', 'status', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'module', 'prompt', 'language', 'environment', 'status', 'validationSummary', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && data.module is string && data.module.size() >= 1 && data.module.size() <= 64
+        && data.prompt is string && data.prompt.size() >= 1 && data.prompt.size() <= 8000
+        && data.language is string && data.language.size() >= 1 && data.language.size() <= 48
+        && data.environment is string && data.environment.size() >= 1 && data.environment.size() <= 64
+        && data.status in ['PLANNING', 'GENERATING', 'IMPLEMENTING', 'VALIDATING', 'TESTING', 'NEEDS_CORRECTION', 'COMPLETED', 'BLOCKED']
+        && (!('validationSummary' in data) || (data.validationSummary is string && data.validationSummary.size() <= 4000))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidDeployment(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'projectId', 'projectName', 'provider', 'environment', 'status', 'version', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'projectId', 'projectName', 'provider', 'environment', 'status', 'url', 'domain', 'version', 'logsSummary', 'responseTimeMs', 'createdAt', 'updatedAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidId(data.projectId)
+        && data.projectName is string && data.projectName.size() >= 1 && data.projectName.size() <= 140
+        && data.provider is string && data.provider.size() >= 1 && data.provider.size() <= 48
+        && data.environment in ['production', 'staging', 'preview']
+        && data.status in ['NOT_DEPLOYED', 'PREPARING', 'BUILDING', 'DEPLOYING', 'ONLINE', 'FAILED', 'ROLLING_BACK', 'SUSPENDED']
+        && (!('url' in data) || (data.url is string && data.url.size() <= 512))
+        && (!('domain' in data) || (data.domain is string && data.domain.size() <= 256))
+        && data.version is string && data.version.size() >= 1 && data.version.size() <= 32
+        && (!('logsSummary' in data) || (data.logsSummary is string && data.logsSummary.size() <= 8000))
+        && (!('responseTimeMs' in data) || (data.responseTimeMs is int && data.responseTimeMs >= 0))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidBackup(data) {
+      return data.keys().hasAll(['id', 'ownerId', 'projectId', 'projectName', 'label', 'sha256', 'filesCount', 'payloadJson', 'createdAt'])
+        && data.keys().hasOnly(['id', 'ownerId', 'projectId', 'projectName', 'label', 'sha256', 'filesCount', 'payloadJson', 'createdAt'])
+        && isValidId(data.id)
+        && isValidId(data.ownerId)
+        && isValidId(data.projectId)
+        && data.projectName is string && data.projectName.size() >= 1 && data.projectName.size() <= 140
+        && data.label is string && data.label.size() >= 1 && data.label.size() <= 140
+        && data.sha256 is string && data.sha256.size() >= 16 && data.sha256.size() <= 128
+        && data.filesCount is int && data.filesCount >= 0 && data.filesCount <= 500
+        && data.payloadJson is string && data.payloadJson.size() >= 2 && data.payloadJson.size() <= 450000
+        && data.createdAt is timestamp;
+    }
+
+    // --- Collection Rules ---
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
+      allow list, write: if false;
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isValidId(userId)
+        && isOwner(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == userId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (incoming().role == 'engineer' || isAdmin());
+      allow update: if isValidId(userId)
+        && isValidUserProfile(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (isOwner(userId)
+            && incoming().role == existing().role
+            && incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'defaultDeliveryMode', 'updatedAt']))
+        );
+      allow delete: if false;
+    }
+
+    match /projects/{projectId} {
+      allow get: if isValidId(projectId) && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow create: if isValidId(projectId)
+        && isSignedIn()
+        && isValidProject(incoming())
+        && incoming().id == projectId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(projectId)
+        && isSignedIn()
+        && isValidProject(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() ||
+          (isOwner(existing().ownerId)
+            && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'description', 'status', 'filesCount', 'updatedAt']))
+        );
+      allow delete: if isValidId(projectId) && (isOwner(existing().ownerId) || isAdmin());
+
+      match /files/{fileId} {
+        allow get: if isValidId(projectId) && isValidId(fileId)
+          && isSignedIn()
+          && (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid || isAdmin());
+        allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+        allow create: if isValidId(projectId) && isValidId(fileId)
+          && isSignedIn()
+          && isValidProjectFile(incoming())
+          && incoming().id == fileId
+          && incoming().projectId == projectId
+          && incoming().ownerId == request.auth.uid
+          && incoming().createdAt == request.time
+          && incoming().updatedAt == request.time
+          && exists(/databases/$(database)/documents/projects/$(projectId))
+          && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+        allow update: if isValidId(projectId) && isValidId(fileId)
+          && isSignedIn()
+          && isValidProjectFile(incoming())
+          && incoming().id == existing().id
+          && incoming().projectId == existing().projectId
+          && incoming().ownerId == existing().ownerId
+          && incoming().createdAt == existing().createdAt
+          && incoming().updatedAt == request.time
+          && (
+            isAdmin() ||
+            (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid
+              && incoming().diff(existing()).affectedKeys().hasOnly(['path', 'content', 'language', 'fileKind', 'version', 'updatedAt']))
+          );
+        allow delete: if isValidId(projectId) && isValidId(fileId)
+          && isSignedIn()
+          && (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid || isAdmin());
+      }
+
+      match /memories/{memoryId} {
+        allow get: if isValidId(projectId) && isValidId(memoryId)
+          && isSignedIn()
+          && (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid || isAdmin());
+        allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+        allow create: if isValidId(projectId) && isValidId(memoryId)
+          && isSignedIn()
+          && isValidProjectMemory(incoming())
+          && incoming().id == memoryId
+          && incoming().projectId == projectId
+          && incoming().ownerId == request.auth.uid
+          && incoming().createdAt == request.time
+          && incoming().updatedAt == request.time
+          && exists(/databases/$(database)/documents/projects/$(projectId))
+          && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid;
+        allow update: if isValidId(projectId) && isValidId(memoryId)
+          && isSignedIn()
+          && isValidProjectMemory(incoming())
+          && incoming().id == existing().id
+          && incoming().projectId == existing().projectId
+          && incoming().ownerId == existing().ownerId
+          && incoming().createdAt == existing().createdAt
+          && incoming().updatedAt == request.time
+          && get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid
+          && incoming().diff(existing()).affectedKeys().hasOnly(['decisionTitle', 'requirements', 'updatedAt']);
+        allow delete: if isValidId(projectId) && isValidId(memoryId)
+          && isSignedIn()
+          && (get(/databases/$(database)/documents/projects/$(projectId)).data.ownerId == request.auth.uid || isAdmin());
+      }
+    }
+
+    match /aiSessions/{sessionId} {
+      allow get: if isValidId(sessionId) && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow create: if isValidId(sessionId)
+        && isSignedIn()
+        && isValidAiSession(incoming())
+        && incoming().id == sessionId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(sessionId)
+        && isSignedIn()
+        && isValidAiSession(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (isOwner(existing().ownerId) || isAdmin())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'updatedAt']);
+      allow delete: if isValidId(sessionId) && (isOwner(existing().ownerId) || isAdmin());
+
+      match /messages/{messageId} {
+        allow get: if isValidId(sessionId) && isValidId(messageId)
+          && isSignedIn()
+          && (get(/databases/$(database)/documents/aiSessions/$(sessionId)).data.ownerId == request.auth.uid || isAdmin());
+        allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+        allow create: if isValidId(sessionId) && isValidId(messageId)
+          && isSignedIn()
+          && isValidAiMessage(incoming())
+          && incoming().id == messageId
+          && incoming().sessionId == sessionId
+          && incoming().ownerId == request.auth.uid
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/aiSessions/$(sessionId))
+          && get(/databases/$(database)/documents/aiSessions/$(sessionId)).data.ownerId == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    match /adminKnowledge/{entryId} {
+      allow get: if isValidId(entryId) && isAdmin();
+      allow list: if isAdmin();
+      allow create: if isValidId(entryId)
+        && isAdmin()
+        && isValidAdminKnowledge(incoming())
+        && incoming().id == entryId
+        && incoming().authorId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(entryId)
+        && isAdmin()
+        && isValidAdminKnowledge(incoming())
+        && incoming().id == existing().id
+        && incoming().authorId == existing().authorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'category', 'content', 'updatedAt']);
+      allow delete: if isValidId(entryId) && isAdmin();
+    }
+
+    match /automations/{jobId} {
+      allow get: if isValidId(jobId) && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow create: if isValidId(jobId)
+        && isSignedIn()
+        && isValidAutomationJob(incoming())
+        && incoming().id == jobId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(jobId)
+        && isSignedIn()
+        && isValidAutomationJob(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (isOwner(existing().ownerId) || isAdmin())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'status', 'lastRunSummary', 'runCount', 'targetProjectId', 'updatedAt']);
+      allow delete: if isValidId(jobId) && (isOwner(existing().ownerId) || isAdmin());
+    }
+
+    match /auditLogs/{logId} {
+      allow get: if isValidId(logId) && (isOwner(existing().actorId) || isAdmin());
+      allow list: if isSignedIn() && (existing().actorId == request.auth.uid || isAdmin());
+      allow create: if isValidId(logId)
+        && isSignedIn()
+        && isValidAuditLog(incoming())
+        && incoming().id == logId
+        && incoming().actorId == request.auth.uid
+        && incoming().createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    match /tasks/{taskId} {
+      allow get: if isValidId(taskId) && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow create: if isValidId(taskId)
+        && isSignedIn()
+        && isValidTaskExecution(incoming())
+        && incoming().id == taskId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(taskId)
+        && isSignedIn()
+        && isValidTaskExecution(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (isOwner(existing().ownerId) || isAdmin())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'validationSummary', 'updatedAt']);
+      allow delete: if isValidId(taskId) && (isOwner(existing().ownerId) || isAdmin());
+    }
+
+    match /deployments/{deployId} {
+      allow get: if isValidId(deployId) && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow create: if isValidId(deployId)
+        && isSignedIn()
+        && isValidDeployment(incoming())
+        && incoming().id == deployId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(deployId)
+        && isSignedIn()
+        && isValidDeployment(incoming())
+        && incoming().id == existing().id
+        && incoming().ownerId == existing().ownerId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (isOwner(existing().ownerId) || isAdmin())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'url', 'domain', 'version', 'logsSummary', 'responseTimeMs', 'updatedAt']);
+      allow delete: if isValidId(deployId) && (isOwner(existing().ownerId) || isAdmin());
+    }
+
+    match /backups/{backupId} {
+      allow get: if isValidId(backupId) && (isOwner(existing().ownerId) || isAdmin());
+      allow list: if isSignedIn() && (existing().ownerId == request.auth.uid || isAdmin());
+      allow create: if isValidId(backupId)
+        && isSignedIn()
+        && isValidBackup(incoming())
+        && incoming().id == backupId
+        && incoming().ownerId == request.auth.uid
+        && incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if isValidId(backupId) && (isOwner(existing().ownerId) || isAdmin());
+    }
+  }
+}

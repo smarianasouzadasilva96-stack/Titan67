@@ -1,0 +1,256 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated engineer or administrator profile and workspace preferences.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "photoURL": { "type": "string", "maxLength": 512 },
+        "role": { "type": "string", "enum": ["engineer", "admin"] },
+        "defaultDeliveryMode": { "type": "string", "enum": ["auto", "single-file", "multi-file"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "role", "createdAt", "updatedAt"]
+    },
+    "WorkspaceProject": {
+      "title": "WorkspaceProject",
+      "description": "Persistent software project stored in TITAN Workspace.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "projectType": { "type": "string", "enum": ["script", "luau", "android", "web", "api", "fullstack", "single-file"] },
+        "language": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "environment": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "status": { "type": "string", "enum": ["PLANNING", "GENERATING", "IMPLEMENTING", "VALIDATING", "TESTING", "NEEDS_CORRECTION", "COMPLETED", "BLOCKED"] },
+        "filesCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "name", "projectType", "language", "environment", "status", "filesCount", "createdAt", "updatedAt"]
+    },
+    "ProjectFile": {
+      "title": "ProjectFile",
+      "description": "Source code, configuration, manifest, or documentation file inside a workspace project.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "path": { "type": "string", "minLength": 1, "maxLength": 260 },
+        "content": { "type": "string", "maxLength": 200000 },
+        "language": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "fileKind": { "type": "string", "enum": ["Script", "LocalScript", "ModuleScript", "Source", "Config", "Manifest", "Doc"] },
+        "version": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "projectId", "ownerId", "path", "content", "language", "fileKind", "version", "createdAt", "updatedAt"]
+    },
+    "ProjectMemory": {
+      "title": "ProjectMemory",
+      "description": "Persistent architectural decisions and requirements per project.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "decisionTitle": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "requirements": { "type": "string", "minLength": 1, "maxLength": 20000 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "projectId", "ownerId", "decisionTitle", "requirements", "createdAt", "updatedAt"]
+    },
+    "AiSession": {
+      "title": "AiSession",
+      "description": "Persistent AI conversation and reasoning session.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "module": { "type": "string", "enum": ["core-ai", "admin-ai", "script-studio", "project-builder", "luau-lab", "agent", "orchestrator"] },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "agentId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "module", "title", "createdAt", "updatedAt"]
+    },
+    "AiMessage": {
+      "title": "AiMessage",
+      "description": "Individual prompt or response message in an AI session.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "sessionId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "role": { "type": "string", "enum": ["user", "assistant", "system"] },
+        "content": { "type": "string", "minLength": 1, "maxLength": 120000 },
+        "modelUsed": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "sessionId", "ownerId", "role", "content", "createdAt"]
+    },
+    "AdminKnowledge": {
+      "title": "AdminKnowledge",
+      "description": "Persistent administrative procedures and platform knowledge taught to TITAN ADMIN AI.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "authorId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "category": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "content": { "type": "string", "minLength": 1, "maxLength": 20000 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "authorId", "title", "category", "content", "createdAt", "updatedAt"]
+    },
+    "AutomationJob": {
+      "title": "AutomationJob",
+      "description": "Configured TITAN Automation workflow with execution state and history summary.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "actionType": { "type": "string", "enum": ["static-analysis", "auto-fix", "format", "test-suite", "docs-gen", "project-audit", "security-scan", "backup-sync"] },
+        "targetProjectId": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["IDLE", "RUNNING", "COMPLETED", "FAILED"] },
+        "lastRunSummary": { "type": "string", "maxLength": 4000 },
+        "runCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "name", "actionType", "status", "runCount", "createdAt", "updatedAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable security and execution audit log entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actorId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "module": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "action": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "severity": { "type": "string", "enum": ["info", "warning", "error", "critical"] },
+        "detail": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorId", "module", "action", "severity", "detail", "createdAt"]
+    },
+    "TaskExecution": {
+      "title": "TaskExecution",
+      "description": "Tracked engineering pipeline task with strict validation gates and evidence state.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "module": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "prompt": { "type": "string", "minLength": 1, "maxLength": 8000 },
+        "language": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "environment": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "status": { "type": "string", "enum": ["PLANNING", "GENERATING", "IMPLEMENTING", "VALIDATING", "TESTING", "NEEDS_CORRECTION", "COMPLETED", "BLOCKED"] },
+        "validationSummary": { "type": "string", "maxLength": 4000 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "module", "prompt", "language", "environment", "status", "createdAt", "updatedAt"]
+    },
+    "DeploymentRecord": {
+      "title": "DeploymentRecord",
+      "description": "Deployment history, provider state, domain/TLS verification, and rollback version metadata.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectName": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "provider": { "type": "string", "minLength": 1, "maxLength": 48 },
+        "environment": { "type": "string", "enum": ["production", "staging", "preview"] },
+        "status": { "type": "string", "enum": ["NOT_DEPLOYED", "PREPARING", "BUILDING", "DEPLOYING", "ONLINE", "FAILED", "ROLLING_BACK", "SUSPENDED"] },
+        "url": { "type": "string", "maxLength": 512 },
+        "domain": { "type": "string", "maxLength": 256 },
+        "version": { "type": "string", "minLength": 1, "maxLength": 32 },
+        "logsSummary": { "type": "string", "maxLength": 8000 },
+        "responseTimeMs": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "projectId", "projectName", "provider", "environment", "status", "version", "createdAt", "updatedAt"]
+    },
+    "ProjectBackup": {
+      "title": "ProjectBackup",
+      "description": "Verified snapshot backup of a Workspace project with SHA-256 integrity hash.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "ownerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "projectName": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "label": { "type": "string", "minLength": 1, "maxLength": 140 },
+        "sha256": { "type": "string", "minLength": 16, "maxLength": 128 },
+        "filesCount": { "type": "integer" },
+        "payloadJson": { "type": "string", "minLength": 2, "maxLength": 450000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "ownerId", "projectId", "projectName", "label", "sha256", "filesCount", "payloadJson", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "User profiles isolated per owner."
+    },
+    "/projects/{projectId}": {
+      "schema": { "$ref": "#/entities/WorkspaceProject" },
+      "description": "User workspace projects."
+    },
+    "/projects/{projectId}/files/{fileId}": {
+      "schema": { "$ref": "#/entities/ProjectFile" },
+      "description": "Files belonging to a workspace project."
+    },
+    "/projects/{projectId}/memories/{memoryId}": {
+      "schema": { "$ref": "#/entities/ProjectMemory" },
+      "description": "Persistent architectural decisions and requirements per project."
+    },
+    "/aiSessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/AiSession" },
+      "description": "AI conversation sessions."
+    },
+    "/aiSessions/{sessionId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/AiMessage" },
+      "description": "Messages inside an AI session."
+    },
+    "/adminKnowledge/{entryId}": {
+      "schema": { "$ref": "#/entities/AdminKnowledge" },
+      "description": "Admin AI persistent knowledge entries."
+    },
+    "/automations/{jobId}": {
+      "schema": { "$ref": "#/entities/AutomationJob" },
+      "description": "Automation pipelines configured by users."
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Security and execution audit logs."
+    },
+    "/tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/TaskExecution" },
+      "description": "Tracked engineering pipeline tasks."
+    },
+    "/deployments/{deployId}": {
+      "schema": { "$ref": "#/entities/DeploymentRecord" },
+      "description": "Deployment records, status, and rollback history."
+    },
+    "/backups/{backupId}": {
+      "schema": { "$ref": "#/entities/ProjectBackup" },
+      "description": "Project snapshot backups with SHA-256 verification."
+    }
+  }
+}

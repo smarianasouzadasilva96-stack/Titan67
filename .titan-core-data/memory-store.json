@@ -1,0 +1,658 @@
+{
+  "currentVersion": 3,
+  "modelVersion": "1.0.0",
+  "entries": [
+    {
+      "id": "mem_luau_fly_v1",
+      "kind": "language-spec",
+      "language": "Luau",
+      "title": "Luau Roblox LocalScript Fly Architecture",
+      "content": "Use Players.LocalPlayer, UserInputService, RunService.RenderStepped, Workspace.CurrentCamera, LinearVelocity (fallback BodyVelocity), and AlignOrientation. Clean connections on CharacterAdded/Humanoid.Died.",
+      "tags": [
+        "luau",
+        "roblox",
+        "fly",
+        "localscript",
+        "wasd"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    },
+    {
+      "id": "mem_py_calc_v1",
+      "kind": "pattern",
+      "language": "Python",
+      "title": "Python Typed Calculator with ZeroDivisionError Guard",
+      "content": "Define typed functions add, subtract, multiply, divide, power, handle ZeroDivisionError and ValueError cleanly, include assert self-tests in __main__.",
+      "tags": [
+        "python",
+        "calculator",
+        "assert",
+        "error-handling"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    },
+    {
+      "id": "mem_ts_rest_v1",
+      "kind": "pattern",
+      "language": "TypeScript",
+      "title": "TypeScript Express REST API Pattern",
+      "content": "Use express.Router / express(), strict TypeScript interfaces, input validation helper, CRUD Map/store, HTTP 201/400/404 status codes, and /health endpoint.",
+      "tags": [
+        "typescript",
+        "rest",
+        "api",
+        "express",
+        "crud"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    },
+    {
+      "id": "mem_kotlin_android_v1",
+      "kind": "language-spec",
+      "language": "Kotlin",
+      "title": "Android Jetpack Compose / Activity Complete Structure",
+      "content": "Include settings.gradle.kts, build.gradle.kts, app/build.gradle.kts, AndroidManifest.xml, MainActivity.kt with setContent/UI state, strings.xml, and architecture README.md.",
+      "tags": [
+        "kotlin",
+        "android",
+        "apk",
+        "compose",
+        "mainactivity"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    },
+    {
+      "id": "mem_cpp_cli_v1",
+      "kind": "pattern",
+      "language": "C++",
+      "title": "Modern C++17 CLI Application Pattern",
+      "content": "Include <iostream>, <vector>, <string>, <stdexcept>, RAII class encapsulation, command parsing loop/flags, and deterministic test assertions.",
+      "tags": [
+        "c++",
+        "cpp",
+        "cli",
+        "main"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    },
+    {
+      "id": "mem_php_crud_v1",
+      "kind": "pattern",
+      "language": "PHP",
+      "title": "PHP 8 PDO Prepared Statement CRUD Pattern",
+      "content": "Use <?php declare(strict_types=1);, PDO SQLite/MySQL with ERRMODE_EXCEPTION, prepared statements against SQL injection, and JSON HTTP response helpers.",
+      "tags": [
+        "php",
+        "crud",
+        "pdo",
+        "api"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    },
+    {
+      "id": "mem_go_file_v1",
+      "kind": "pattern",
+      "language": "Go",
+      "title": "Go Idiomatic File Reader with bufio.Scanner",
+      "content": "Use package main, os.Open, defer file.Close(), bufio.NewScanner, line statistics, and explicit error returns.",
+      "tags": [
+        "go",
+        "golang",
+        "file",
+        "reader",
+        "scanner"
+      ],
+      "validated": true,
+      "version": 1,
+      "createdAt": "2026-11-16T19:17:44.980Z"
+    }
+  ],
+  "errorFixes": [
+    {
+      "id": "fix_61995ef9",
+      "language": "Luau",
+      "errorSignature": "Removida palavra-chave export inválida em Luau. | 1 fechamento(s) 'end' ausente(s) adicionado(s) em Luau.",
+      "rootCause": "Removida palavra-chave export inválida em Luau.",
+      "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em Luau.",
+      "beforeSnippet": "export function move()\n    local speed = 16\n    print(speed)\n",
+      "afterSnippet": "local function move()\n    local speed = 16\n    print(speed)\nend\n",
+      "verifiedCount": 2,
+      "createdAt": "2026-11-16T19:19:45.956Z"
+    },
+    {
+      "id": "fix_32f7a278",
+      "language": "JSON",
+      "errorSignature": "Chave `}` ausente adicionada ao final do JSON. | Vírgula extra inválida antes de fechamento em JSON removida.",
+      "rootCause": "Chave `}` ausente adicionada ao final do JSON.",
+      "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em JSON.",
+      "beforeSnippet": "{\n  \"name\": \"titan\",\n  \"active\": true,\n",
+      "afterSnippet": "{\n  \"name\": \"titan\",\n  \"active\": true\n}\n",
+      "verifiedCount": 2,
+      "createdAt": "2026-11-16T19:19:45.931Z"
+    },
+    {
+      "id": "fix_47656293",
+      "language": "Python",
+      "errorSignature": "Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado. | Substituído console.log() por print() nativo Python.",
+      "rootCause": "Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado.",
+      "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em Python.",
+      "beforeSnippet": "def somar(a, b)\n    console.log(a + b)\n    return a + b\n",
+      "afterSnippet": "def somar(a, b):\n    print(a + b)\n    return a + b\n",
+      "verifiedCount": 4,
+      "createdAt": "2026-11-16T19:19:10.184Z"
+    },
+    {
+      "id": "fix_json_trailing_comma",
+      "language": "JSON",
+      "errorSignature": "Trailing comma or missing brace in JSON",
+      "rootCause": "Vírgula sobrando antes de } ou ] ou bloco não fechado.",
+      "fixDescription": "Remove vírgulas finais inválidas e balanceia chaves/colchetes.",
+      "beforeSnippet": "{\"name\": \"titan\",}",
+      "afterSnippet": "{\n  \"name\": \"titan\"\n}",
+      "verifiedCount": 1,
+      "createdAt": "2026-11-16T19:17:44.981Z"
+    },
+    {
+      "id": "fix_luau_ts_leak",
+      "language": "Luau",
+      "errorSignature": "export function / console.log inside Luau script",
+      "rootCause": "Sintaxe TypeScript/JavaScript misturada com Luau.",
+      "fixDescription": "Converte declarações export/console.log para construtos locais Luau e APIs Roblox.",
+      "beforeSnippet": "console.log(\"Ready\")",
+      "afterSnippet": "print(\"Ready\")",
+      "verifiedCount": 1,
+      "createdAt": "2026-11-16T19:17:44.981Z"
+    }
+  ],
+  "evaluations": [
+    {
+      "modelVersion": "1.0.0",
+      "loss": 2.0773,
+      "perplexity": 7.98,
+      "syntaxPassRate": 100,
+      "testedCases": 15,
+      "id": "eval_9cba0550",
+      "evaluatedAt": "2026-11-16T19:20:09.956Z"
+    },
+    {
+      "modelVersion": "1.0.0",
+      "loss": 2.1029,
+      "perplexity": 8.19,
+      "syntaxPassRate": 100,
+      "testedCases": 15,
+      "id": "eval_5ddd228d",
+      "evaluatedAt": "2026-11-16T19:17:51.636Z"
+    }
+  ],
+  "snapshots": [
+    {
+      "versionId": "v2-e13702",
+      "reason": "Backup antes de rollback para v1-b1dd83",
+      "modelVersion": "1.0.0",
+      "createdAt": "2026-11-16T19:20:25.492Z",
+      "entries": [
+        {
+          "id": "mem_d331497e",
+          "kind": "pattern",
+          "language": "Python",
+          "title": "PERSISTENCE_MARKER_2026",
+          "content": "def persistent_check(): return 2026",
+          "fixAfter": "def persistent_check():\n    return 2026\n",
+          "tags": [
+            "persistence-test",
+            "python"
+          ],
+          "validated": true,
+          "version": 2,
+          "createdAt": "2026-11-16T19:20:10.509Z"
+        },
+        {
+          "id": "mem_luau_fly_v1",
+          "kind": "language-spec",
+          "language": "Luau",
+          "title": "Luau Roblox LocalScript Fly Architecture",
+          "content": "Use Players.LocalPlayer, UserInputService, RunService.RenderStepped, Workspace.CurrentCamera, LinearVelocity (fallback BodyVelocity), and AlignOrientation. Clean connections on CharacterAdded/Humanoid.Died.",
+          "tags": [
+            "luau",
+            "roblox",
+            "fly",
+            "localscript",
+            "wasd"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_py_calc_v1",
+          "kind": "pattern",
+          "language": "Python",
+          "title": "Python Typed Calculator with ZeroDivisionError Guard",
+          "content": "Define typed functions add, subtract, multiply, divide, power, handle ZeroDivisionError and ValueError cleanly, include assert self-tests in __main__.",
+          "tags": [
+            "python",
+            "calculator",
+            "assert",
+            "error-handling"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_ts_rest_v1",
+          "kind": "pattern",
+          "language": "TypeScript",
+          "title": "TypeScript Express REST API Pattern",
+          "content": "Use express.Router / express(), strict TypeScript interfaces, input validation helper, CRUD Map/store, HTTP 201/400/404 status codes, and /health endpoint.",
+          "tags": [
+            "typescript",
+            "rest",
+            "api",
+            "express",
+            "crud"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_kotlin_android_v1",
+          "kind": "language-spec",
+          "language": "Kotlin",
+          "title": "Android Jetpack Compose / Activity Complete Structure",
+          "content": "Include settings.gradle.kts, build.gradle.kts, app/build.gradle.kts, AndroidManifest.xml, MainActivity.kt with setContent/UI state, strings.xml, and architecture README.md.",
+          "tags": [
+            "kotlin",
+            "android",
+            "apk",
+            "compose",
+            "mainactivity"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_cpp_cli_v1",
+          "kind": "pattern",
+          "language": "C++",
+          "title": "Modern C++17 CLI Application Pattern",
+          "content": "Include <iostream>, <vector>, <string>, <stdexcept>, RAII class encapsulation, command parsing loop/flags, and deterministic test assertions.",
+          "tags": [
+            "c++",
+            "cpp",
+            "cli",
+            "main"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_php_crud_v1",
+          "kind": "pattern",
+          "language": "PHP",
+          "title": "PHP 8 PDO Prepared Statement CRUD Pattern",
+          "content": "Use <?php declare(strict_types=1);, PDO SQLite/MySQL with ERRMODE_EXCEPTION, prepared statements against SQL injection, and JSON HTTP response helpers.",
+          "tags": [
+            "php",
+            "crud",
+            "pdo",
+            "api"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_go_file_v1",
+          "kind": "pattern",
+          "language": "Go",
+          "title": "Go Idiomatic File Reader with bufio.Scanner",
+          "content": "Use package main, os.Open, defer file.Close(), bufio.NewScanner, line statistics, and explicit error returns.",
+          "tags": [
+            "go",
+            "golang",
+            "file",
+            "reader",
+            "scanner"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        }
+      ],
+      "errorFixes": [
+        {
+          "id": "fix_61995ef9",
+          "language": "Luau",
+          "errorSignature": "Removida palavra-chave export inválida em Luau. | 1 fechamento(s) 'end' ausente(s) adicionado(s) em Luau.",
+          "rootCause": "Removida palavra-chave export inválida em Luau.",
+          "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em Luau.",
+          "beforeSnippet": "export function move()\n    local speed = 16\n    print(speed)\n",
+          "afterSnippet": "local function move()\n    local speed = 16\n    print(speed)\nend\n",
+          "verifiedCount": 2,
+          "createdAt": "2026-11-16T19:19:45.956Z"
+        },
+        {
+          "id": "fix_32f7a278",
+          "language": "JSON",
+          "errorSignature": "Chave `}` ausente adicionada ao final do JSON. | Vírgula extra inválida antes de fechamento em JSON removida.",
+          "rootCause": "Chave `}` ausente adicionada ao final do JSON.",
+          "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em JSON.",
+          "beforeSnippet": "{\n  \"name\": \"titan\",\n  \"active\": true,\n",
+          "afterSnippet": "{\n  \"name\": \"titan\",\n  \"active\": true\n}\n",
+          "verifiedCount": 2,
+          "createdAt": "2026-11-16T19:19:45.931Z"
+        },
+        {
+          "id": "fix_47656293",
+          "language": "Python",
+          "errorSignature": "Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado. | Substituído console.log() por print() nativo Python.",
+          "rootCause": "Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado.",
+          "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em Python.",
+          "beforeSnippet": "def somar(a, b)\n    console.log(a + b)\n    return a + b\n",
+          "afterSnippet": "def somar(a, b):\n    print(a + b)\n    return a + b\n",
+          "verifiedCount": 4,
+          "createdAt": "2026-11-16T19:19:10.184Z"
+        },
+        {
+          "id": "fix_json_trailing_comma",
+          "language": "JSON",
+          "errorSignature": "Trailing comma or missing brace in JSON",
+          "rootCause": "Vírgula sobrando antes de } ou ] ou bloco não fechado.",
+          "fixDescription": "Remove vírgulas finais inválidas e balanceia chaves/colchetes.",
+          "beforeSnippet": "{\"name\": \"titan\",}",
+          "afterSnippet": "{\n  \"name\": \"titan\"\n}",
+          "verifiedCount": 1,
+          "createdAt": "2026-11-16T19:17:44.981Z"
+        },
+        {
+          "id": "fix_luau_ts_leak",
+          "language": "Luau",
+          "errorSignature": "export function / console.log inside Luau script",
+          "rootCause": "Sintaxe TypeScript/JavaScript misturada com Luau.",
+          "fixDescription": "Converte declarações export/console.log para construtos locais Luau e APIs Roblox.",
+          "beforeSnippet": "console.log(\"Ready\")",
+          "afterSnippet": "print(\"Ready\")",
+          "verifiedCount": 1,
+          "createdAt": "2026-11-16T19:17:44.981Z"
+        }
+      ]
+    },
+    {
+      "versionId": "v1-b1dd83",
+      "reason": "Pré-atualização: PERSISTENCE_MARKER_2026",
+      "modelVersion": "1.0.0",
+      "createdAt": "2026-11-16T19:20:10.508Z",
+      "entries": [
+        {
+          "id": "mem_luau_fly_v1",
+          "kind": "language-spec",
+          "language": "Luau",
+          "title": "Luau Roblox LocalScript Fly Architecture",
+          "content": "Use Players.LocalPlayer, UserInputService, RunService.RenderStepped, Workspace.CurrentCamera, LinearVelocity (fallback BodyVelocity), and AlignOrientation. Clean connections on CharacterAdded/Humanoid.Died.",
+          "tags": [
+            "luau",
+            "roblox",
+            "fly",
+            "localscript",
+            "wasd"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_py_calc_v1",
+          "kind": "pattern",
+          "language": "Python",
+          "title": "Python Typed Calculator with ZeroDivisionError Guard",
+          "content": "Define typed functions add, subtract, multiply, divide, power, handle ZeroDivisionError and ValueError cleanly, include assert self-tests in __main__.",
+          "tags": [
+            "python",
+            "calculator",
+            "assert",
+            "error-handling"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_ts_rest_v1",
+          "kind": "pattern",
+          "language": "TypeScript",
+          "title": "TypeScript Express REST API Pattern",
+          "content": "Use express.Router / express(), strict TypeScript interfaces, input validation helper, CRUD Map/store, HTTP 201/400/404 status codes, and /health endpoint.",
+          "tags": [
+            "typescript",
+            "rest",
+            "api",
+            "express",
+            "crud"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_kotlin_android_v1",
+          "kind": "language-spec",
+          "language": "Kotlin",
+          "title": "Android Jetpack Compose / Activity Complete Structure",
+          "content": "Include settings.gradle.kts, build.gradle.kts, app/build.gradle.kts, AndroidManifest.xml, MainActivity.kt with setContent/UI state, strings.xml, and architecture README.md.",
+          "tags": [
+            "kotlin",
+            "android",
+            "apk",
+            "compose",
+            "mainactivity"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_cpp_cli_v1",
+          "kind": "pattern",
+          "language": "C++",
+          "title": "Modern C++17 CLI Application Pattern",
+          "content": "Include <iostream>, <vector>, <string>, <stdexcept>, RAII class encapsulation, command parsing loop/flags, and deterministic test assertions.",
+          "tags": [
+            "c++",
+            "cpp",
+            "cli",
+            "main"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_php_crud_v1",
+          "kind": "pattern",
+          "language": "PHP",
+          "title": "PHP 8 PDO Prepared Statement CRUD Pattern",
+          "content": "Use <?php declare(strict_types=1);, PDO SQLite/MySQL with ERRMODE_EXCEPTION, prepared statements against SQL injection, and JSON HTTP response helpers.",
+          "tags": [
+            "php",
+            "crud",
+            "pdo",
+            "api"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        },
+        {
+          "id": "mem_go_file_v1",
+          "kind": "pattern",
+          "language": "Go",
+          "title": "Go Idiomatic File Reader with bufio.Scanner",
+          "content": "Use package main, os.Open, defer file.Close(), bufio.NewScanner, line statistics, and explicit error returns.",
+          "tags": [
+            "go",
+            "golang",
+            "file",
+            "reader",
+            "scanner"
+          ],
+          "validated": true,
+          "version": 1,
+          "createdAt": "2026-11-16T19:17:44.980Z"
+        }
+      ],
+      "errorFixes": [
+        {
+          "id": "fix_61995ef9",
+          "language": "Luau",
+          "errorSignature": "Removida palavra-chave export inválida em Luau. | 1 fechamento(s) 'end' ausente(s) adicionado(s) em Luau.",
+          "rootCause": "Removida palavra-chave export inválida em Luau.",
+          "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em Luau.",
+          "beforeSnippet": "export function move()\n    local speed = 16\n    print(speed)\n",
+          "afterSnippet": "local function move()\n    local speed = 16\n    print(speed)\nend\n",
+          "verifiedCount": 2,
+          "createdAt": "2026-11-16T19:19:45.956Z"
+        },
+        {
+          "id": "fix_32f7a278",
+          "language": "JSON",
+          "errorSignature": "Chave `}` ausente adicionada ao final do JSON. | Vírgula extra inválida antes de fechamento em JSON removida.",
+          "rootCause": "Chave `}` ausente adicionada ao final do JSON.",
+          "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em JSON.",
+          "beforeSnippet": "{\n  \"name\": \"titan\",\n  \"active\": true,\n",
+          "afterSnippet": "{\n  \"name\": \"titan\",\n  \"active\": true\n}\n",
+          "verifiedCount": 2,
+          "createdAt": "2026-11-16T19:19:45.931Z"
+        },
+        {
+          "id": "fix_47656293",
+          "language": "Python",
+          "errorSignature": "Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado. | Substituído console.log() por print() nativo Python.",
+          "rootCause": "Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado.",
+          "fixDescription": "Automatic Repair Engine aplicou 2 correção(ões) sintática(s)/estrutural(is) em Python.",
+          "beforeSnippet": "def somar(a, b)\n    console.log(a + b)\n    return a + b\n",
+          "afterSnippet": "def somar(a, b):\n    print(a + b)\n    return a + b\n",
+          "verifiedCount": 4,
+          "createdAt": "2026-11-16T19:19:10.184Z"
+        },
+        {
+          "id": "fix_json_trailing_comma",
+          "language": "JSON",
+          "errorSignature": "Trailing comma or missing brace in JSON",
+          "rootCause": "Vírgula sobrando antes de } ou ] ou bloco não fechado.",
+          "fixDescription": "Remove vírgulas finais inválidas e balanceia chaves/colchetes.",
+          "beforeSnippet": "{\"name\": \"titan\",}",
+          "afterSnippet": "{\n  \"name\": \"titan\"\n}",
+          "verifiedCount": 1,
+          "createdAt": "2026-11-16T19:17:44.981Z"
+        },
+        {
+          "id": "fix_luau_ts_leak",
+          "language": "Luau",
+          "errorSignature": "export function / console.log inside Luau script",
+          "rootCause": "Sintaxe TypeScript/JavaScript misturada com Luau.",
+          "fixDescription": "Converte declarações export/console.log para construtos locais Luau e APIs Roblox.",
+          "beforeSnippet": "console.log(\"Ready\")",
+          "afterSnippet": "print(\"Ready\")",
+          "verifiedCount": 1,
+          "createdAt": "2026-11-16T19:17:44.981Z"
+        }
+      ]
+    }
+  ],
+  "auditTrail": [
+    {
+      "id": "aud_490ca4",
+      "action": "MEMORY_ROLLBACK",
+      "detail": "Memória revertida para snapshot v1-b1dd83 (Pré-atualização: PERSISTENCE_MARKER_2026).",
+      "timestamp": "2026-11-16T19:20:25.493Z"
+    },
+    {
+      "id": "aud_8ed437",
+      "action": "CONTROLLED_LEARN",
+      "detail": "Registrado [pattern] (Python): PERSISTENCE_MARKER_2026",
+      "timestamp": "2026-11-16T19:20:10.509Z"
+    },
+    {
+      "id": "aud_9674a0",
+      "action": "EVALUATION",
+      "detail": "Loss=2.0773, Perplexity=7.98, PassRate=100%",
+      "timestamp": "2026-11-16T19:20:09.956Z"
+    },
+    {
+      "id": "aud_e18b93",
+      "action": "REPAIR_REINFORCED",
+      "detail": "Correção reforçada (Luau): Removida palavra-chave export inválida em Luau. | 1 fechamento(s) 'end' ausente(s) adicionado(s) em Luau.",
+      "timestamp": "2026-11-16T19:20:08.649Z"
+    },
+    {
+      "id": "aud_43ed39",
+      "action": "REPAIR_REINFORCED",
+      "detail": "Correção reforçada (JSON): Chave `}` ausente adicionada ao final do JSON. | Vírgula extra inválida antes de fechamento em JSON removida.",
+      "timestamp": "2026-11-16T19:20:08.622Z"
+    },
+    {
+      "id": "aud_11ff81",
+      "action": "REPAIR_REINFORCED",
+      "detail": "Correção reforçada (Python): Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado. | Substituído console.log() por print() nativo Python.",
+      "timestamp": "2026-11-16T19:20:08.556Z"
+    },
+    {
+      "id": "aud_85ff7a",
+      "action": "REPAIR_LEARNED",
+      "detail": "Novo par erro→solução validado em Luau.",
+      "timestamp": "2026-11-16T19:19:45.956Z"
+    },
+    {
+      "id": "aud_d1995b",
+      "action": "REPAIR_LEARNED",
+      "detail": "Novo par erro→solução validado em JSON.",
+      "timestamp": "2026-11-16T19:19:45.931Z"
+    },
+    {
+      "id": "aud_df8a7d",
+      "action": "REPAIR_REINFORCED",
+      "detail": "Correção reforçada (Python): Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado. | Substituído console.log() por print() nativo Python.",
+      "timestamp": "2026-11-16T19:19:45.864Z"
+    },
+    {
+      "id": "aud_cebf9d",
+      "action": "REPAIR_REINFORCED",
+      "detail": "Correção reforçada (Python): Dois-pontos `:` ausente no cabeçalho de bloco Python adicionado. | Substituído console.log() por print() nativo Python.",
+      "timestamp": "2026-11-16T19:19:29.408Z"
+    },
+    {
+      "id": "aud_01f7ab",
+      "action": "REPAIR_LEARNED",
+      "detail": "Novo par erro→solução validado em Python.",
+      "timestamp": "2026-11-16T19:19:10.184Z"
+    },
+    {
+      "id": "aud_ba9815",
+      "action": "EVALUATION",
+      "detail": "Loss=2.1029, Perplexity=8.19, PassRate=100%",
+      "timestamp": "2026-11-16T19:17:51.636Z"
+    },
+    {
+      "id": "aud_80832a",
+      "action": "MEMORY_INIT",
+      "detail": "Base persistente inicializada com padrões validados multi-linguagem.",
+      "timestamp": "2026-11-16T19:17:44.981Z"
+    }
+  ]
+}
